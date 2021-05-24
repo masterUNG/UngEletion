@@ -13,4 +13,7 @@ class MyConstant {
   static final Color redDark = Color(0xff8c0013);
 
   static final String logo = 'images/logo.png';
+  static final String cancelImage = 'images/cancel.png';
+
+  static final String domain = 'https://b16aefd40c63.ngrok.io';
 }

@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ungelection/model/election_model.dart';
 import 'package:ungelection/utlity/my_constant.dart';
 import 'package:ungelection/widget/show_logo.dart';
+import 'package:ungelection/widget/show_progress.dart';
 
 class Election extends StatefulWidget {
   @override
@@ -9,6 +14,48 @@ class Election extends StatefulWidget {
 
 class _ElectionState extends State<Election> {
   double size;
+  bool nonChooseBool = false; // false => Yollow Light
+  bool cancelBool = false; // false => Red Light
+  List<ElectionModel> electionModels = [];
+  bool load = true;
+  List<Widget> widgets = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    readData();
+  }
+
+  Future<Null> readData() async {
+    String api = '${MyConstant.domain}/fluttertraining/getAllFood.php';
+
+    await Dio().get(api).then(
+      (value) {
+        print('### value = $value');
+        if (value.toString() != 'null') {
+          for (var item in json.decode(value.data)) {
+            ElectionModel model = ElectionModel.fromMap(item);
+            setState(() {
+              load = false;
+              electionModels.add(model);
+              widgets.add(createWidget(model));
+            });
+          }
+        }
+      },
+    );
+  }
+
+  Widget createWidget(ElectionModel model) => Row(
+    children: [
+      Container(
+            width: 100,
+            height: 100,
+            child: Image.network('${MyConstant.domain}${model.image}'),
+          ),Text(model.nameFood),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +76,12 @@ class _ElectionState extends State<Election> {
                   borderRadius: BorderRadius.circular(20),
                   color: MyConstant.greenBody,
                 ),
-                child: Center(child: Text('Panel')),
+                child: load
+                    ? ShowProgress()
+                    : GridView.extent(
+                        maxCrossAxisExtent: 250,
+                        children: widgets,
+                      ),
               ),
             ),
           ),
@@ -43,11 +95,14 @@ class _ElectionState extends State<Election> {
                   color: MyConstant.greenDark,
                 ),
                 child: Center(
-                  child: Column(
-                    children: [
-                      buildLogo(),
-                      buildMidButton(),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        buildLogo(),
+                        buildMidButton(),
+                        buildSave(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -57,6 +112,15 @@ class _ElectionState extends State<Election> {
       ),
     );
   }
+
+  Container buildSave() => Container(
+      width: size * 0.25 * 0.3,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.symmetric(vertical: 32),
+      child: Image.asset(MyConstant.cancelImage));
 
   Container buildMidButton() {
     return Container(
@@ -82,8 +146,14 @@ class _ElectionState extends State<Election> {
       width: size * 0.25 - 150,
       height: size * 0.25 - 150,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyConstant.yellowDark),
-        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+            primary:
+                nonChooseBool ? MyConstant.yellowDark : MyConstant.yellowlight),
+        onPressed: () {
+          setState(() {
+            nonChooseBool = !nonChooseBool;
+          });
+        },
         child: SizedBox(),
       ),
     );
@@ -95,7 +165,9 @@ class _ElectionState extends State<Election> {
       width: size * 0.25 - 150,
       height: size * 0.25 - 150,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyConstant.redDark),
+        style: ElevatedButton.styleFrom(
+          primary: MyConstant.redDark,
+        ),
         onPressed: () {},
         child: SizedBox(),
       ),
