@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ungelection/model/amount_model.dart';
 import 'package:ungelection/model/election_model.dart';
 import 'package:ungelection/model/otp_model.dart';
+import 'package:ungelection/provider/amount_provider.dart';
+import 'package:ungelection/utlity/dialog.dart';
 import 'package:ungelection/utlity/my_constant.dart';
 import 'package:ungelection/widget/show_logo.dart';
 import 'package:ungelection/widget/show_progress.dart';
@@ -28,6 +32,8 @@ class _ElectionState extends State<Election> {
   bool click = true;
 
   OtpModel otpModel;
+  AmountProvider amountProvider;
+  int amountInt;
 
   @override
   void initState() {
@@ -35,6 +41,10 @@ class _ElectionState extends State<Election> {
     super.initState();
 
     otpModel = widget.otpModel;
+    amountInt = int.parse(otpModel.amount);
+    AmountModel amountModel = AmountModel(amount: amountInt);
+    amountProvider = Provider.of<AmountProvider>(context, listen: false);
+    amountProvider.addAmountProvider(amountModel);
 
     readData();
   }
@@ -156,12 +166,12 @@ class _ElectionState extends State<Election> {
                 otpModel.name,
                 MyConstant().h1whiteStyle(),
               ),
-              MyConstant().showTitle(
-                'จำนวนที่เลือกได้ ${otpModel.amount}',
-                MyConstant().h2whiteStyle(),
-              ),
+              buildAmount(),
             ],
-          ),SizedBox(width: 30,),
+          ),
+          SizedBox(
+            width: 30,
+          ),
         ],
       ),
       body: Row(
@@ -207,10 +217,44 @@ class _ElectionState extends State<Election> {
                               ),
                             ),
                             GestureDetector(
+                              //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
                               onTap: () {
-                                setState(() {
-                                  chooses[index] = !chooses[index];
-                                });
+                                if (amountInt != 0) {
+                                  setState(() {
+                                    chooses[index] = !chooses[index];
+                                  });
+
+                                  if (chooses[index]) {
+                                    amountInt--;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  } else {
+                                    amountInt++;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  }
+                                } else if (chooses[index]) {
+                                  setState(() {
+                                    chooses[index] = !chooses[index];
+                                  });
+
+                                  if (chooses[index]) {
+                                    amountInt--;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  } else {
+                                    amountInt++;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  }
+                                } else {
+                                  normalDialog(context, 'คุณเลือกครบแล้ว !!!',
+                                      'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
+                                }
                               },
                               child: Card(
                                 color: chooses[index]
@@ -254,6 +298,16 @@ class _ElectionState extends State<Election> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildAmount() {
+    return Consumer(
+      builder: (context, AmountProvider amountProvider, child) =>
+          MyConstant().showTitle(
+        'จำนวนที่เลือกได้ ${amountProvider.getAmountProvider()[0].amount}',
+        MyConstant().h2whiteStyle(),
       ),
     );
   }
@@ -312,6 +366,8 @@ class _ElectionState extends State<Election> {
     );
   }
 
+  bool statusCancel = false; // true => Cencel, false => Non Cancel
+
   Container buildCancel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4),
@@ -319,9 +375,13 @@ class _ElectionState extends State<Election> {
       height: size * 0.25 - 150,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: MyConstant.redDark,
+          primary: statusCancel ? MyConstant.redLight : MyConstant.redDark,
         ),
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            statusCancel = !statusCancel;
+          });
+        },
         child: SizedBox(),
       ),
     );

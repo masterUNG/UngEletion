@@ -15,7 +15,7 @@ class MyConstant {
   static final String logo = 'images/logo.png';
   static final String cancelImage = 'images/cancel.png';
 
-  static final String domain = 'https://5e8d8695b7f0.ngrok.io';
+  static final String domain = 'https://dbafa640d02a.ngrok.io';
 
   Widget showTitle(String title, TextStyle textStyle) => Text(
         title,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/states/authen_landscape.dart';
 
 final Map<String, WidgetBuilder> map = {
@@ -22,10 +24,19 @@ class MyApp extends StatelessWidget {
         DeviceOrientation.landscapeRight,
       ],
     );
-    return MaterialApp(
-      routes: map,
-      initialRoute: initialRoute,
-      theme: ThemeData(primaryColor: Colors.green.shade900),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) {
+            return AmountProvider();
+          },
+        ),
+      ],
+      child: MaterialApp(
+        routes: map,
+        initialRoute: initialRoute,
+        theme: ThemeData(primaryColor: Colors.green.shade900),
+      ),
     );
   }
 }
