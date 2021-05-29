@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ungelection/states/election.dart';
+import 'package:ungelection/states/authen_landscape.dart';
 
 final Map<String, WidgetBuilder> map = {
-  '/election': (BuildContext context) => Election(),
+  '/authenLandscape': (BuildContext context) => AuthenLandScape(),
 };
 
 String initialRoute;
 
 void main() {
-  initialRoute = '/election';
+  initialRoute = '/authenLandscape';
   runApp(MyApp());
 }
 

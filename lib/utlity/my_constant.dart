@@ -15,5 +15,40 @@ class MyConstant {
   static final String logo = 'images/logo.png';
   static final String cancelImage = 'images/cancel.png';
 
-  static final String domain = 'https://b16aefd40c63.ngrok.io';
+  static final String domain = 'https://5e8d8695b7f0.ngrok.io';
+
+  Widget showTitle(String title, TextStyle textStyle) => Text(
+        title,
+        style: textStyle,
+      );
+
+  TextStyle h0Style() => TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+
+  TextStyle h1Style() => TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: greenDark,
+      );
+
+  TextStyle h2Style() => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: Colors.white,
+      );
+
+       TextStyle h1whiteStyle() => TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+
+  TextStyle h2whiteStyle() => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: Colors.white,
+      );
 }
