@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungelection/model/amount_model.dart';
 import 'package:ungelection/model/election_model.dart';
 import 'package:ungelection/model/otp_model.dart';
@@ -22,7 +25,8 @@ class Election extends StatefulWidget {
 
 class _ElectionState extends State<Election> {
   double size;
-  bool nonChooseBool = false; // false => Yollow Light
+  bool nonChooseBool =
+      true; // false => Yollow Light<ไม่ประสง์ออกคะแนน>, true => Yellow Dark
   bool cancelBool = false; // false => Red Light
   List<ElectionModel> electionModels = [];
   bool load = true;
@@ -34,6 +38,8 @@ class _ElectionState extends State<Election> {
   OtpModel otpModel;
   AmountProvider amountProvider;
   int amountInt;
+
+  List<String> choiceChoosesIds = [];
 
   @override
   void initState() {
@@ -229,11 +235,23 @@ class _ElectionState extends State<Election> {
                                     AmountModel model =
                                         AmountModel(amount: amountInt);
                                     amountProvider.addAmountProvider(model);
+
+                                    choiceChoosesIds
+                                        .add(electionModels[index].id);
+                                    print(
+                                        '## choiceChooseIds ==>> $choiceChoosesIds');
                                   } else {
                                     amountInt++;
                                     AmountModel model =
                                         AmountModel(amount: amountInt);
                                     amountProvider.addAmountProvider(model);
+
+                                    print(
+                                        '### index ที่ไม่เลือก ==>> ${electionModels[index].id}');
+                                    choiceChoosesIds
+                                        .remove(electionModels[index].id);
+                                    print(
+                                        '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
                                   }
                                 } else if (chooses[index]) {
                                   setState(() {
@@ -321,13 +339,66 @@ class _ElectionState extends State<Election> {
   }
 
   Container buildSave() => Container(
-      width: size * 0.25 * 0.3,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.symmetric(vertical: 32),
-      child: Image.asset(MyConstant.cancelImage));
+        width: size * 0.25 * 0.3,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.symmetric(vertical: 32),
+        child: InkWell(
+          child: Image.asset(MyConstant.cancelImage),
+          onTap: () {
+            // bool nonChooseBool = true; // false => Yollow Light<ไม่ประสง์ออกคะแนน>, true => Yellow Dark
+            if ((choiceChoosesIds.length == 0) && nonChooseBool) {
+              normalDialog(context, 'ยังไม่ได้เลือกใครเลย ?',
+                  'โปรดเลือก หรือ ไม่ประสงค์ลงคะแนน');
+            } else {
+              print('###### คุณเลือก ==>> $choiceChoosesIds');
+              editStatusAndSaveChoiceChoosId();
+            }
+          },
+        ),
+      );
+
+  Future<Null> editStatusAndSaveChoiceChoosId() async {
+    // 1. Edit Status to false
+    String path =
+        '${MyConstant.domain}/fluttertraining/editStatusWhereId.php?isAdd=true&id=${otpModel.id}';
+    print('### path = $path');
+    await Dio().get(path).then((value) async {
+      if (value.toString() == 'true') {
+        // 2. Save choiceChoosesIds -> Sharepreferance
+        print('### Edit Status Success');
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setStringList('choose', choiceChoosesIds).then((value) {
+          DateTime dateTime = DateTime(
+            2021,
+            6,
+            6,
+            15,
+            40,
+          );
+
+          Timer(dateTime.difference(DateTime.now()), () async {
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            List<String> choiceChooseId = preferences.getStringList('choose');
+            print('######## ผลการเลือกตั้ง ==>> $choiceChooseId #########');
+            String path =
+                '${MyConstant.domain}/fluttertraining/editChoiceChooseWhereId.php?isAdd=true&id=${otpModel.id}&choiceChooseIds=$choiceChooseId';
+            await Dio()
+                .get(path)
+                .then((value) => print('##### Edit Finish #####'));
+          });
+
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/authenLandscape', (route) => false);
+        });
+      } else {
+        normalDialog(context, 'มีปํญหา', 'โปรดลองใหม่อีกครั้งครับ');
+      }
+    });
+  }
 
   Container buildMidButton() {
     return Container(
@@ -381,10 +452,35 @@ class _ElectionState extends State<Election> {
           setState(() {
             statusCancel = !statusCancel;
           });
+          delayTime();
         },
         child: SizedBox(),
       ),
     );
+  }
+
+  Future<Null> delayTime() async {
+    Duration duration = Duration(seconds: 2);
+    await Timer(duration, () {
+      for (var item in choiceChoosesIds) {
+        amountInt++;
+        AmountModel model = AmountModel(amount: amountInt);
+        amountProvider.addAmountProvider(model);
+      }
+
+      chooses.clear();
+      for (var item in electionModels) {
+        setState(() {
+          chooses.add(false);
+        });
+      }
+
+      choiceChoosesIds.clear();
+
+      setState(() {
+        statusCancel = !statusCancel;
+      });
+    });
   }
 
   Row buildLogo() {

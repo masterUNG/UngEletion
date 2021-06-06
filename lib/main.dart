@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:ungelection/provider/amount2_provider.dart';
 import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/states/authen_landscape.dart';
 
@@ -29,6 +30,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) {
             return AmountProvider();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return Amount2Provider();
           },
         ),
       ],
