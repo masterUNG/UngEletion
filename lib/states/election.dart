@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungelection/model/amount_model.dart';
 import 'package:ungelection/model/election_model.dart';
+import 'package:ungelection/model/eletiondate_model.dart';
 import 'package:ungelection/model/otp_model.dart';
+import 'package:ungelection/model/sqlite_model.dart';
 import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/utlity/dialog.dart';
 import 'package:ungelection/utlity/my_constant.dart';
+import 'package:ungelection/utlity/sqlite_helper.dart';
 import 'package:ungelection/widget/show_logo.dart';
 import 'package:ungelection/widget/show_progress.dart';
 import 'package:ungelection/widget/show_title.dart';
@@ -41,6 +42,10 @@ class _ElectionState extends State<Election> {
 
   List<String> choiceChoosesIds = [];
 
+  List<SQLiteModel> sqliteModels = [];
+
+  ElectionDateModel electionDateModel;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -53,6 +58,22 @@ class _ElectionState extends State<Election> {
     amountProvider.addAmountProvider(amountModel);
 
     readData();
+    readEletionDate();
+  }
+
+  Future<Null> readEletionDate() async {
+    String path = '${MyConstant.domain}/fluttertraining/getAllEletionDate.php';
+    await Dio().get(path).then((value) {
+      for (var item in json.decode(value.data)) {
+        electionDateModel = ElectionDateModel.fromMap(item);
+      }
+    });
+  }
+
+  Future<Null> deleteAllSQLite() async {
+    await SQLiteHelper()
+        .deleteAllData()
+        .then((value) => print('### deleteAllSQLite Success'));
   }
 
   Future<Null> readData() async {
@@ -360,6 +381,28 @@ class _ElectionState extends State<Election> {
         ),
       );
 
+  Future<Null> readSQLite() async {
+    if (sqliteModels.length != 0) {
+      sqliteModels.clear();
+    }
+
+    await SQLiteHelper().readAllData().then((value) async {
+      sqliteModels = value;
+      for (var item in sqliteModels) {
+        print('### id = ${item.id} | ${item.idOtp} | ${item.choiceChooseId}');
+
+        String path =
+            '${MyConstant.domain}/fluttertraining/editChooseWhereId.php?isAdd=true&id=${item.idOtp}&choiceChooseIds=${item.choiceChooseId}';
+        print('### path api of editChoise ==>> $path');
+        await Dio().get(path).then((value) => print('##### Edit Finish #####'));
+      }
+    }).then((value) {
+      deleteAllSQLite();
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/showResult', (route) => false);
+    });
+  }
+
   Future<Null> editStatusAndSaveChoiceChoosId() async {
     // 1. Edit Status to false
     String path =
@@ -368,27 +411,30 @@ class _ElectionState extends State<Election> {
     await Dio().get(path).then((value) async {
       if (value.toString() == 'true') {
         // 2. Save choiceChoosesIds -> Sharepreferance
-        print('### Edit Status Success');
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setStringList('choose', choiceChoosesIds).then((value) {
+        print('######## Edit Status Success ##########');
+
+        SQLiteModel model = SQLiteModel(
+            idOtp: otpModel.id, choiceChooseId: choiceChoosesIds.toString());
+        await SQLiteHelper().insertValueToSQLite(model).then((value) {
+          int year = int.parse(electionDateModel.year);
+          int month = int.parse(electionDateModel.month);
+          int day = int.parse(electionDateModel.day);
+          int hour = int.parse(electionDateModel.hour);
+          int minus = int.parse(electionDateModel.minus);
+
+          print(
+              'year = $year, month = $month, day = $day, hour = $hour, minus = $minus');
+
           DateTime dateTime = DateTime(
-            2021,
-            6,
-            6,
-            15,
-            40,
+            year,
+            month,
+            day,
+            hour,
+            minus,
           );
 
           Timer(dateTime.difference(DateTime.now()), () async {
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            List<String> choiceChooseId = preferences.getStringList('choose');
-            print('######## ผลการเลือกตั้ง ==>> $choiceChooseId #########');
-            String path =
-                '${MyConstant.domain}/fluttertraining/editChoiceChooseWhereId.php?isAdd=true&id=${otpModel.id}&choiceChooseIds=$choiceChooseId';
-            await Dio()
-                .get(path)
-                .then((value) => print('##### Edit Finish #####'));
+            readSQLite();
           });
 
           Navigator.pushNamedAndRemoveUntil(

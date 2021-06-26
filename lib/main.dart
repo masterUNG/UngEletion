@@ -4,15 +4,18 @@ import 'package:provider/provider.dart';
 import 'package:ungelection/provider/amount2_provider.dart';
 import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/states/authen_landscape.dart';
+import 'package:ungelection/states/show_result.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/authenLandscape': (BuildContext context) => AuthenLandScape(),
+  '/showResult':(BuildContext context)=>ShowReslut(),
 };
 
 String initialRoute;
 
 void main() {
-  initialRoute = '/authenLandscape';
+  // initialRoute = '/authenLandscape';
+  initialRoute = '/showResult';
   runApp(MyApp());
 }
 
