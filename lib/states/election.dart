@@ -421,7 +421,6 @@ class _ElectionState extends State<Election> {
           int day = int.parse(electionDateModel.day);
           int hour = int.parse(electionDateModel.hour);
           int minus = int.parse(electionDateModel.minus);
-
           print(
               'year = $year, month = $month, day = $day, hour = $hour, minus = $minus');
 
@@ -432,11 +431,9 @@ class _ElectionState extends State<Election> {
             hour,
             minus,
           );
-
           Timer(dateTime.difference(DateTime.now()), () async {
             readSQLite();
           });
-
           Navigator.pushNamedAndRemoveUntil(
               context, '/authenLandscape', (route) => false);
         });

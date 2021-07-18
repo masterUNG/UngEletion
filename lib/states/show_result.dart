@@ -21,6 +21,7 @@ class _ShowReslutState extends State<ShowReslut> {
   List<ElectionModel> electionModels = [];
   List<String> nameElectionChooses = [];
   List<String> idElectinChooses = [];
+  Map<String, int> mapAmount = {};
 
   @override
   void initState() {
@@ -42,13 +43,24 @@ class _ShowReslutState extends State<ShowReslut> {
 
   Future<Null> readAllResult() async {
     String apiResult = '${MyConstant.domain}/fluttertraining/getAllResult.php';
-    print('#### apiResult ===>> $apiResult');
-    await Dio().get(apiResult).then((value) {
+    // print('#### apiResult ===>> $apiResult');
+    await Dio().get(apiResult).then((value) async {
       for (var item in json.decode(value.data)) {
         OtpModel otpModel = OtpModel.fromMap(item);
         String string = otpModel.choiceChooseIds;
         createArrayNameEletion(string);
       }
+
+      print('##### mapAmount ==>> $mapAmount');
+      print('##### mapAmount length ==>> ${mapAmount.length}');
+
+      mapAmount.forEach((key, value) async {
+        String nameElection = await findNameElection(key);
+        print('NameEle ==>> $nameElection');
+        setState(() {
+          data.add(ResultModel(xValue: nameElection, yValue: value));
+        });
+      });
 
       setState(() {
         statusLoad = false;
@@ -56,8 +68,22 @@ class _ShowReslutState extends State<ShowReslut> {
     });
   }
 
+  Future<String> findNameElection(String id) async {
+    String nameFood;
+    String apiGetElectionWhereId =
+        '${MyConstant.domain}/fluttertraining/getElectionWhereId.php?isAdd=true&id=$id';
+    await Dio().get(apiGetElectionWhereId).then((value) {
+     
+      for (var item in json.decode(value.data)) {
+        ElectionModel model = ElectionModel.fromMap(item);
+        nameFood = model.nameFood;
+      }
+    });
+    return nameFood;
+  }
+
   void createArrayNameEletion(String string) {
-    print('### string = $string');
+    // print('### string = $string');
     String result = string.substring(1, string.length - 1);
 
     List<String> results = result.split(',');
@@ -66,19 +92,23 @@ class _ShowReslutState extends State<ShowReslut> {
       results[index] = item.trim();
       index++;
     }
-    print('### resuts = $results');
-    // for (var item in results) {
-    //   if (idElectinChooses.length != 0) {
-    //     for (var item2 in idElectinChooses) {
-    //       if (item != item2) {
-    //         idElectinChooses.add(item);
-    //       }
-    //     }
-    //   } else {
-    //     idElectinChooses.add(item);
-    //   }
-    // }
-    print('##### idElectinChooses = $idElectinChooses');
+    // print('### resuts = $results');
+
+    for (var item in results) {
+      mapAmount[item] = calculateAmount(item);
+    }
+  }
+
+  int calculateAmount(String keyString) {
+    // print(
+    //     '### keyString ==> $keyString, mapAmount[$keyString] ==> ${mapAmount[keyString]}');
+    if (mapAmount[keyString] == null) {
+      return 1;
+    } else {
+      int i = mapAmount[keyString];
+      i++;
+      return i;
+    }
   }
 
   @override
@@ -91,10 +121,7 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   var data = [
-    ResultModel(xValue: 'AAA', yValue: 10),
-    ResultModel(xValue: 'BBB', yValue: 50),
-    ResultModel(xValue: 'CCC', yValue: 120),
-    ResultModel(xValue: 'DDD', yValue: 40),
+    ResultModel(xValue: '', yValue: 0),
   ];
 
   Widget buildChart() {

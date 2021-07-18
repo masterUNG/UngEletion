@@ -14,8 +14,7 @@ final Map<String, WidgetBuilder> map = {
 String initialRoute;
 
 void main() {
-  // initialRoute = '/authenLandscape';
-  initialRoute = '/showResult';
+  initialRoute = '/authenLandscape';
   runApp(MyApp());
 }
 
