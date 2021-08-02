@@ -31,7 +31,7 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   Future<Null> readAllData() async {
-    String apiReadData = '${MyConstant.domain}/fluttertraining/getAllFood.php';
+    String apiReadData = '${MyConstant.domain}/election/getAllFood.php';
     await Dio().get(apiReadData).then((value) {
       for (var item in json.decode(value.data)) {
         ElectionModel model = ElectionModel.fromMap(item);
@@ -42,7 +42,7 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   Future<Null> readAllResult() async {
-    String apiResult = '${MyConstant.domain}/fluttertraining/getAllResult.php';
+    String apiResult = '${MyConstant.domain}/election/getAllResult.php';
     // print('#### apiResult ===>> $apiResult');
     await Dio().get(apiResult).then((value) async {
       for (var item in json.decode(value.data)) {
@@ -69,17 +69,17 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   Future<String> findNameElection(String id) async {
-    String nameFood;
+    String nameElection;
     String apiGetElectionWhereId =
-        '${MyConstant.domain}/fluttertraining/getElectionWhereId.php?isAdd=true&id=$id';
+        '${MyConstant.domain}/election/getElectionWhereId.php?isAdd=true&id=$id';
     await Dio().get(apiGetElectionWhereId).then((value) {
      
       for (var item in json.decode(value.data)) {
         ElectionModel model = ElectionModel.fromMap(item);
-        nameFood = model.nameFood;
+        nameElection = model.name;
       }
     });
-    return nameFood;
+    return nameElection;
   }
 
   void createArrayNameEletion(String string) {

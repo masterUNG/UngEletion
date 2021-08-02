@@ -62,7 +62,7 @@ class _ElectionState extends State<Election> {
   }
 
   Future<Null> readEletionDate() async {
-    String path = '${MyConstant.domain}/fluttertraining/getAllEletionDate.php';
+    String path = '${MyConstant.domain}/election/getAllEletionDate.php';
     await Dio().get(path).then((value) {
       for (var item in json.decode(value.data)) {
         electionDateModel = ElectionDateModel.fromMap(item);
@@ -81,7 +81,7 @@ class _ElectionState extends State<Election> {
       widgets.clear();
     }
 
-    String api = '${MyConstant.domain}/fluttertraining/getAllFood.php';
+    String api = '${MyConstant.domain}/election/getAllSchool.php';
 
     await Dio().get(api).then(
       (value) {
@@ -89,6 +89,7 @@ class _ElectionState extends State<Election> {
         if (value.toString() != 'null') {
           for (var item in json.decode(value.data)) {
             ElectionModel model = ElectionModel.fromMap(item);
+            print('#### urlimage ===>>> ${MyConstant.domain}/election/${model.image}');
             if (click) {
               chooses.add(false);
             }
@@ -118,7 +119,7 @@ class _ElectionState extends State<Election> {
                     width: 60,
                     height: 60,
                     child: Image.network(
-                      '${MyConstant.domain}${model.image}',
+                      '${MyConstant.domain}/election/${model.image}',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -127,14 +128,14 @@ class _ElectionState extends State<Election> {
                       Container(
                         width: 60,
                         child: ShowTitle(
-                          title: model.nameFood,
+                          title: model.name,
                           textStyle: MyConstant().h1Style(),
                         ),
                       ),
                       Container(
                         width: 60,
                         child: ShowTitle(
-                          title: cutWord(model.detail),
+                          title: cutWord(model.name),
                           textStyle: MyConstant().h2Style(),
                         ),
                       ),
@@ -229,14 +230,14 @@ class _ElectionState extends State<Election> {
                                       width: 60,
                                       height: 60,
                                       child: Image.network(
-                                        '${MyConstant.domain}${electionModels[index].image}',
+                                        '${MyConstant.domain}/election/${electionModels[index].image}',
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                     Container(
                                       width: 60,
                                       child: ShowTitle(
-                                          title: electionModels[index].nameFood,
+                                          title: electionModels[index].name,
                                           textStyle: MyConstant().h1Style()),
                                     ),
                                   ],
@@ -392,7 +393,7 @@ class _ElectionState extends State<Election> {
         print('### id = ${item.id} | ${item.idOtp} | ${item.choiceChooseId}');
 
         String path =
-            '${MyConstant.domain}/fluttertraining/editChooseWhereId.php?isAdd=true&id=${item.idOtp}&choiceChooseIds=${item.choiceChooseId}';
+            '${MyConstant.domain}/election/editChooseWhereId.php?isAdd=true&id=${item.idOtp}&choiceChooseIds=${item.choiceChooseId}';
         print('### path api of editChoise ==>> $path');
         await Dio().get(path).then((value) => print('##### Edit Finish #####'));
       }
@@ -406,7 +407,7 @@ class _ElectionState extends State<Election> {
   Future<Null> editStatusAndSaveChoiceChoosId() async {
     // 1. Edit Status to false
     String path =
-        '${MyConstant.domain}/fluttertraining/editStatusWhereId.php?isAdd=true&id=${otpModel.id}';
+        '${MyConstant.domain}/election/editStatusWhereId.php?isAdd=true&id=${otpModel.id}';
     print('### path = $path');
     await Dio().get(path).then((value) async {
       if (value.toString() == 'true') {

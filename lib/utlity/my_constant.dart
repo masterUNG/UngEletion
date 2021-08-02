@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MyConstant {
+  static final String routeAuthenLandScape = '/authenLandscape';
+  static final String routeShowResult = '/showResult';
+
   static final String election = 'ตู้เลือกตั้ง';
   static final String nonChoose = 'ไม่ประสงค์ลงคะแนน';
   static final String cancel = 'ยกเลิก';
@@ -15,7 +18,7 @@ class MyConstant {
   static final String logo = 'images/logo.png';
   static final String cancelImage = 'images/cancel.png';
 
-  static final String domain = 'https://570502ab74c4.ngrok.io';
+  static final String domain = 'https://www.androidthai.in.th';
 
   Widget showTitle(String title, TextStyle textStyle) => Text(
         title,
@@ -40,7 +43,7 @@ class MyConstant {
         color: Colors.white,
       );
 
-       TextStyle h1whiteStyle() => TextStyle(
+  TextStyle h1whiteStyle() => TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.white,

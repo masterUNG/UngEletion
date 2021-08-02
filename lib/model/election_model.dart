@@ -2,26 +2,22 @@ import 'dart:convert';
 
 class ElectionModel {
   final String id;
-  final String nameFood;
-  final String detail;
+  final String name;
   final String image;
   ElectionModel({
-     this.id,
-     this.nameFood,
-     this.detail,
-     this.image,
+    this.id,
+    this.name,
+    this.image,
   });
 
   ElectionModel copyWith({
     String id,
-    String nameFood,
-    String detail,
+    String name,
     String image,
   }) {
     return ElectionModel(
       id: id ?? this.id,
-      nameFood: nameFood ?? this.nameFood,
-      detail: detail ?? this.detail,
+      name: name ?? this.name,
       image: image ?? this.image,
     );
   }
@@ -29,8 +25,7 @@ class ElectionModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'nameFood': nameFood,
-      'detail': detail,
+      'name': name,
       'image': image,
     };
   }
@@ -38,8 +33,7 @@ class ElectionModel {
   factory ElectionModel.fromMap(Map<String, dynamic> map) {
     return ElectionModel(
       id: map['id'],
-      nameFood: map['nameFood'],
-      detail: map['detail'],
+      name: map['name'],
       image: map['image'],
     );
   }
@@ -49,9 +43,7 @@ class ElectionModel {
   factory ElectionModel.fromJson(String source) => ElectionModel.fromMap(json.decode(source));
 
   @override
-  String toString() {
-    return 'ElectionModel(id: $id, nameFood: $nameFood, detail: $detail, image: $image)';
-  }
+  String toString() => 'ElectionModel(id: $id, name: $name, image: $image)';
 
   @override
   bool operator ==(Object other) {
@@ -59,16 +51,10 @@ class ElectionModel {
   
     return other is ElectionModel &&
       other.id == id &&
-      other.nameFood == nameFood &&
-      other.detail == detail &&
+      other.name == name &&
       other.image == image;
   }
 
   @override
-  int get hashCode {
-    return id.hashCode ^
-      nameFood.hashCode ^
-      detail.hashCode ^
-      image.hashCode;
-  }
+  int get hashCode => id.hashCode ^ name.hashCode ^ image.hashCode;
 }

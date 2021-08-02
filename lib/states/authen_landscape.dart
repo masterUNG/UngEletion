@@ -17,7 +17,7 @@ class AuthenLandScape extends StatefulWidget {
 class _AuthenLandScapeState extends State<AuthenLandScape> {
   Future<Null> checkOTP(String otp) async {
     String api =
-        '${MyConstant.domain}/fluttertraining/getOtpWherePin.php?isAdd=true&otp=$otp';
+        '${MyConstant.domain}/election/getOtpWherePin.php?isAdd=true&otp=$otp';
     await Dio().get(api).then((value) {
       print('##### value = $value ###');
       if (value.toString() == 'null') {
