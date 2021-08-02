@@ -8,12 +8,12 @@ class ElectionDateModel {
   final String hour;
   final String minus;
   ElectionDateModel({
-    this.id,
-    this.year,
-    this.month,
-    this.day,
-    this.hour,
-    this.minus,
+     this.id,
+     this.year,
+     this.month,
+     this.day,
+     this.hour,
+     this.minus,
   });
 
   ElectionDateModel copyWith({
@@ -62,7 +62,7 @@ class ElectionDateModel {
 
   @override
   String toString() {
-    return 'EletionDataModel(id: $id, year: $year, month: $month, day: $day, hour: $hour, minus: $minus)';
+    return 'ElectionDateModel(id: $id, year: $year, month: $month, day: $day, hour: $hour, minus: $minus)';
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class MyConstant {
   static final String routeAuthenLandScape = '/authenLandscape';
   static final String routeShowResult = '/showResult';
+  static final String routeBeforeElelction = '/beforeElection';
 
   static final String election = 'ตู้เลือกตั้ง';
   static final String nonChoose = 'ไม่ประสงค์ลงคะแนน';

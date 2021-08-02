@@ -89,7 +89,8 @@ class _ElectionState extends State<Election> {
         if (value.toString() != 'null') {
           for (var item in json.decode(value.data)) {
             ElectionModel model = ElectionModel.fromMap(item);
-            print('#### urlimage ===>>> ${MyConstant.domain}/election/${model.image}');
+            print(
+                '#### urlimage ===>>> ${MyConstant.domain}/election/${model.image}');
             if (click) {
               chooses.add(false);
             }
@@ -148,7 +149,9 @@ class _ElectionState extends State<Election> {
           GestureDetector(
             onTap: () {
               click = false;
-              // print('#### you Click choiceInt ==>> $choiceInt');
+              print('=====================================================');
+              print('########[[[[]]]] you Click choiceInt ==>> $choiceInt');
+              print('=====================================================');
               setState(() {
                 chooses[choiceInt - 1] = !chooses[choiceInt - 1];
                 readData();
@@ -247,55 +250,60 @@ class _ElectionState extends State<Election> {
                             GestureDetector(
                               //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
                               onTap: () {
-                                if (amountInt != 0) {
-                                  setState(() {
-                                    chooses[index] = !chooses[index];
-                                  });
-
-                                  if (chooses[index]) {
-                                    amountInt--;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-
-                                    choiceChoosesIds
-                                        .add(electionModels[index].id);
-                                    print(
-                                        '## choiceChooseIds ==>> $choiceChoosesIds');
-                                  } else {
-                                    amountInt++;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-
-                                    print(
-                                        '### index ที่ไม่เลือก ==>> ${electionModels[index].id}');
-                                    choiceChoosesIds
-                                        .remove(electionModels[index].id);
-                                    print(
-                                        '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
-                                  }
-                                } else if (chooses[index]) {
-                                  setState(() {
-                                    chooses[index] = !chooses[index];
-                                  });
-
-                                  if (chooses[index]) {
-                                    amountInt--;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-                                  } else {
-                                    amountInt++;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-                                  }
+                                if (!nonChooseBool) {
+                                  normalDialog(context, MyConstant.nonChoose,
+                                      'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
                                 } else {
-                                  normalDialog(context, 'คุณเลือกครบแล้ว !!!',
-                                      'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
+                                  if (amountInt != 0) {
+                                    setState(() {
+                                      chooses[index] = !chooses[index];
+                                    });
+
+                                    if (chooses[index]) {
+                                      amountInt--;
+                                      AmountModel model =
+                                          AmountModel(amount: amountInt);
+                                      amountProvider.addAmountProvider(model);
+
+                                      choiceChoosesIds
+                                          .add(electionModels[index].id);
+                                      print(
+                                          '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
+                                    } else {
+                                      amountInt++;
+                                      AmountModel model =
+                                          AmountModel(amount: amountInt);
+                                      amountProvider.addAmountProvider(model);
+
+                                      print(
+                                          '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
+                                      choiceChoosesIds
+                                          .remove(electionModels[index].id);
+                                      print(
+                                          '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
+                                    }
+                                  } else if (chooses[index]) {
+                                    setState(() {
+                                      chooses[index] = !chooses[index];
+                                    });
+
+                                    if (chooses[index]) {
+                                      amountInt--;
+                                      AmountModel model =
+                                          AmountModel(amount: amountInt);
+                                      amountProvider.addAmountProvider(model);
+                                    } else {
+                                      amountInt++;
+                                      AmountModel model =
+                                          AmountModel(amount: amountInt);
+                                      amountProvider.addAmountProvider(model);
+                                    }
+                                  } else {
+                                    normalDialog(context, 'คุณเลือกครบแล้ว !!!',
+                                        'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
+                                  }
                                 }
-                              },
+                              }, // End onTAP
                               child: Card(
                                 color: chooses[index]
                                     ? MyConstant.redLight
@@ -344,11 +352,14 @@ class _ElectionState extends State<Election> {
 
   Widget buildAmount() {
     return Consumer(
-      builder: (context, AmountProvider amountProvider, child) =>
-          MyConstant().showTitle(
-        'จำนวนที่เลือกได้ ${amountProvider.getAmountProvider()[0].amount}',
-        MyConstant().h2whiteStyle(),
-      ),
+      builder: (context, AmountProvider amountProvider, child) {
+        print(
+            '#### amountProvider.getAmountProvider ==>> ${amountProvider.getAmountProvider()}');
+        return MyConstant().showTitle(
+          'จำนวนที่เลือกได้ ${amountProvider.getAmountProvider()[0].amount}',
+          MyConstant().h2whiteStyle(),
+        );
+      },
     );
   }
 
@@ -474,6 +485,10 @@ class _ElectionState extends State<Election> {
         onPressed: () {
           setState(() {
             nonChooseBool = !nonChooseBool;
+            print('nonChooseBool ==>> $nonChooseBool');
+            if (nonChooseBool == false) {
+              delayTime();
+            }
           });
         },
         child: SizedBox(),
@@ -504,7 +519,7 @@ class _ElectionState extends State<Election> {
   }
 
   Future<Null> delayTime() async {
-    Duration duration = Duration(seconds: 2);
+    Duration duration = Duration(seconds: 1);
     await Timer(duration, () {
       for (var item in choiceChoosesIds) {
         amountInt++;
