@@ -31,7 +31,8 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   Future<Null> readAllData() async {
-    String apiReadData = '${MyConstant.domain}/election/getAllFood.php';
+    String apiReadData =
+        'https://www.androidthai.in.th/election/getAllcity.php';
     await Dio().get(apiReadData).then((value) {
       for (var item in json.decode(value.data)) {
         ElectionModel model = ElectionModel.fromMap(item);
@@ -43,7 +44,7 @@ class _ShowReslutState extends State<ShowReslut> {
 
   Future<Null> readAllResult() async {
     String apiResult = '${MyConstant.domain}/election/getAllResult.php';
-    // print('#### apiResult ===>> $apiResult');
+    // print('######### apiResult ===>> $apiResult');
     await Dio().get(apiResult).then((value) async {
       for (var item in json.decode(value.data)) {
         OtpModel otpModel = OtpModel.fromMap(item);
@@ -72,8 +73,9 @@ class _ShowReslutState extends State<ShowReslut> {
     String nameElection;
     String apiGetElectionWhereId =
         '${MyConstant.domain}/election/getElectionWhereId.php?isAdd=true&id=$id';
+    print('##### url getElectionWhereID ==>>> $apiGetElectionWhereId');
     await Dio().get(apiGetElectionWhereId).then((value) {
-     
+      print('######### value ===>>>>>> $value');
       for (var item in json.decode(value.data)) {
         ElectionModel model = ElectionModel.fromMap(item);
         nameElection = model.name;
@@ -83,7 +85,7 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   void createArrayNameEletion(String string) {
-    // print('### string = $string');
+    print('### string = $string');
     String result = string.substring(1, string.length - 1);
 
     List<String> results = result.split(',');
@@ -92,7 +94,7 @@ class _ShowReslutState extends State<ShowReslut> {
       results[index] = item.trim();
       index++;
     }
-    // print('### resuts = $results');
+    print('### resuts = $results');
 
     for (var item in results) {
       mapAmount[item] = calculateAmount(item);
@@ -100,8 +102,8 @@ class _ShowReslutState extends State<ShowReslut> {
   }
 
   int calculateAmount(String keyString) {
-    // print(
-    //     '### keyString ==> $keyString, mapAmount[$keyString] ==> ${mapAmount[keyString]}');
+    print(
+        '### keyString ==> $keyString, mapAmount[$keyString] ==> ${mapAmount[keyString]}');
     if (mapAmount[keyString] == null) {
       return 1;
     } else {

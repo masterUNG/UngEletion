@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
 class MyConstant {
+  static final String apiGetAllElectionDate =
+      'https://www.androidthai.in.th/election/getAllEletionDate.php';
+  static final String apiGetShowElection =
+      'https://www.androidthai.in.th/election/getAllShowElection.php';
+  static final String apiGetAllCity =
+      'https://www.androidthai.in.th/election/getAllcity.php';
+
   static final String routeAuthenLandScape = '/authenLandscape';
   static final String routeShowResult = '/showResult';
   static final String routeBeforeElelction = '/beforeElection';
+  static final String routeAferElection = '/afterElection';
+  static final String routeShowScore = '/showScore';
 
   static final String election = 'ตู้เลือกตั้ง';
   static final String nonChoose = 'ไม่ประสงค์ลงคะแนน';
@@ -54,5 +63,11 @@ class MyConstant {
         fontSize: 14,
         fontWeight: FontWeight.normal,
         color: Colors.white,
+      );
+
+  TextStyle h2YellowStyle() => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: yellowlight,
       );
 }
