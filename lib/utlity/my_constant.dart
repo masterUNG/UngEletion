@@ -7,12 +7,13 @@ class MyConstant {
       'https://www.androidthai.in.th/election/getAllShowElection.php';
   static final String apiGetAllCity =
       'https://www.androidthai.in.th/election/getAllcity.php';
+  static final String apiGetAllotp = 'https://www.androidthai.in.th/election/getAllotp.php';
 
   static final String routeAuthenLandScape = '/authenLandscape';
-  static final String routeShowResult = '/showResult';
+  static final String routeShowElectionResult = '/showElectionResult';
   static final String routeBeforeElelction = '/beforeElection';
   static final String routeAferElection = '/afterElection';
-  static final String routeShowScore = '/showScore';
+  static final String routeShowCheck = '/showCheck';
 
   static final String election = 'ตู้เลือกตั้ง';
   static final String nonChoose = 'ไม่ประสงค์ลงคะแนน';

@@ -40,7 +40,7 @@ class _BeforeElectionState extends State<BeforeElection> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: TextButton(
-          onPressed: () =>Navigator.pushNamed(context, MyConstant.routeShowScore),
+          onPressed: () =>Navigator.pushNamed(context, MyConstant.routeShowCheck),
           child: ShowTitle(
               title: 'Check', textStyle: MyConstant().h2YellowStyle())),
       backgroundColor: MyConstant.greenBody,

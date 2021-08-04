@@ -11,16 +11,16 @@ import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/states/after_election.dart';
 import 'package:ungelection/states/authen_landscape.dart';
 import 'package:ungelection/states/before_election.dart';
-import 'package:ungelection/states/show_result.dart';
-import 'package:ungelection/states/show_score.dart';
+import 'package:ungelection/states/show_check.dart';
+import 'package:ungelection/states/show_election_result.dart';
 import 'package:ungelection/utlity/my_constant.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/authenLandscape': (BuildContext context) => AuthenLandScape(),
-  '/showResult': (BuildContext context) => ShowReslut(),
+  '/showElectionResult': (BuildContext context) => ShowElectionResult(),
   '/beforeElection': (BuildContext context) => BeforeElection(),
   '/afterElection': (BuildContext context) => AfterElection(),
-  '/showScore':(BuildContext context)=>ShowScore(),
+  '/showCheck': (BuildContext context) => ShowCheck(),
 };
 
 String initialRoute;
@@ -59,7 +59,7 @@ Future<Null> main() async {
             for (var item in json.decode(value.data)) {
               ShowResultModel model = ShowResultModel.fromMap(item);
               if (model.showElection == 'true') {
-                initialRoute = MyConstant.routeShowResult;
+                initialRoute = MyConstant.routeShowElectionResult;
                 runApp(MyApp());
               } else {
                 initialRoute = MyConstant.routeAferElection;
