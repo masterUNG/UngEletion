@@ -410,8 +410,41 @@ class _ElectionState extends State<Election> {
       }
     }).then((value) {
       deleteAllSQLite();
+      calculateScore();
       Navigator.pushNamedAndRemoveUntil(
-          context, '/showResult', (route) => false);
+          context, MyConstant.routeAferElection, (route) => false);
+    });
+  }
+
+  Future<Null> calculateScore() async {
+    await Dio().get(MyConstant.apiGetAllotp).then((value) async {
+      for (var item in json.decode(value.data)) {
+        OtpModel model = OtpModel.fromMap(item);
+        if (model.status == 'false') {
+          String scoreStr = model.choiceChooseIds;
+          scoreStr = scoreStr.substring(1, scoreStr.length - 1);
+          List<String> strings = scoreStr.split(',');
+
+          for (var item in strings) {
+            String id = item.trim();
+            String apiGetScoreWhereId =
+                'https://www.androidthai.in.th/election/getElectionWhereId.php?isAdd=true&id=$id';
+            await Dio().get(apiGetScoreWhereId).then((value) async {
+              for (var item in json.decode(value.data)) {
+                ElectionModel electionModel = ElectionModel.fromMap(item);
+                String scoreStr = electionModel.score;
+                int score = int.parse(scoreStr) + 1;
+
+                String apiEditScoreWhereId =
+                    'https://www.androidthai.in.th/election/editScoreWhereId.php?isAdd=true&id=$id&score=$score';
+                await Dio()
+                    .get(apiEditScoreWhereId)
+                    .then((value) => print('### Update at id = $id OK'));
+              }
+            });
+          }
+        }
+      }
     });
   }
 
