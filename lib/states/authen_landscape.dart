@@ -7,6 +7,7 @@ import 'package:ungelection/model/otp_model.dart';
 import 'package:ungelection/states/election.dart';
 import 'package:ungelection/utlity/dialog.dart';
 import 'package:ungelection/utlity/my_constant.dart';
+import 'package:ungelection/utlity/my_test.dart';
 import 'package:ungelection/widget/show_logo.dart';
 
 class AuthenLandScape extends StatefulWidget {
@@ -45,6 +46,10 @@ class _AuthenLandScapeState extends State<AuthenLandScape> {
   Widget build(BuildContext context) {
     double size = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => MyTest().readSQLite(),
+        child: Text('SQLite'),
+      ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: MyConstant.greenBody),

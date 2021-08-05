@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class MyConstant {
+  
   static final String apiGetAllElectionDate =
       'https://www.androidthai.in.th/election/getAllEletionDate.php';
   static final String apiGetShowElection =
       'https://www.androidthai.in.th/election/getAllShowElection.php';
   static final String apiGetAllCity =
       'https://www.androidthai.in.th/election/getAllcity.php';
-  static final String apiGetAllotp = 'https://www.androidthai.in.th/election/getAllotp.php';
+  static final String apiGetAllotp =
+      'https://www.androidthai.in.th/election/getAllotp.php';
 
   static final String routeAuthenLandScape = '/authenLandscape';
   static final String routeShowElectionResult = '/showElectionResult';

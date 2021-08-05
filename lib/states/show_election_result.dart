@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ungelection/states/show_people.dart';
 import 'package:ungelection/states/show_result.dart';
 import 'package:ungelection/states/show_score.dart';
 
@@ -10,10 +11,11 @@ class ShowElectionResult extends StatefulWidget {
 }
 
 class _ShowElectionResultState extends State<ShowElectionResult> {
-  List<String> titles = ['แสดงคะแนน', 'แสดงกราฟ'];
+  List<String> titles = ['แสดงคะแนน', 'แสดงกราฟ', 'สรุปผล'];
   List<Widget> widgets = [
     ShowScore(),
     ShowReslut(),
+    ShowPeople(),
   ];
   int indexBody = 0;
 
@@ -26,6 +28,10 @@ class _ShowElectionResultState extends State<ShowElectionResult> {
         BottomNavigationBarItem(
           icon: Icon(Icons.filter_2),
           label: titles[1],
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.filter_3),
+          label: titles[2],
         ),
       ].toList();
 
