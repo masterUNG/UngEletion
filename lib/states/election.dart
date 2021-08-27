@@ -187,166 +187,178 @@ class _ElectionState extends State<Election> {
     size = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.green.shade300,
-      appBar: AppBar(
-        title: Text(MyConstant.election),
-        actions: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MyConstant().showTitle(
-                otpModel.name,
-                MyConstant().h1whiteStyle(),
-              ),
-              buildAmount(),
-            ],
-          ),
-          SizedBox(
-            width: 30,
-          ),
-        ],
-      ),
+      appBar: buildAppBar(),
       body: Row(
         children: [
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: MyConstant.greenBody,
-                ),
-                child: load
-                    ? ShowProgress()
-                    : GridView.builder(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 250, childAspectRatio: 3),
-                        itemCount: electionModels.length,
-                        itemBuilder: (context, index) => Row(
-                          children: [
-                            Card(
-                              child: Container(
-                                width: 150,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 60,
-                                      height: 60,
-                                      child: Image.network(
-                                        '${MyConstant.domain}/election/${electionModels[index].image}',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      child: ShowTitle(
-                                          title: electionModels[index].name,
-                                          textStyle: MyConstant().h1Style()),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
-                              onTap: () {
-                                if (!nonChooseBool) {
-                                  normalDialog(context, MyConstant.nonChoose,
-                                      'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
-                                } else {
-                                  if (amountInt != 0) {
-                                    setState(() {
-                                      chooses[index] = !chooses[index];
-                                    });
+          buildLeftContent(),
+          buildRightContent(),
+        ],
+      ),
+    );
+  }
 
-                                    if (chooses[index]) {
-                                      amountInt--;
-                                      AmountModel model =
-                                          AmountModel(amount: amountInt);
-                                      amountProvider.addAmountProvider(model);
-
-                                      choiceChoosesIds
-                                          .add(electionModels[index].id);
-                                      // print(
-                                      //     '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
-                                    } else {
-                                      amountInt++;
-                                      AmountModel model =
-                                          AmountModel(amount: amountInt);
-                                      amountProvider.addAmountProvider(model);
-
-                                      // print(
-                                      //     '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
-                                      choiceChoosesIds
-                                          .remove(electionModels[index].id);
-                                      // print(
-                                      //     '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
-                                    }
-                                  } else if (chooses[index]) {
-                                    setState(() {
-                                      chooses[index] = !chooses[index];
-                                    });
-
-                                    if (chooses[index]) {
-                                      amountInt--;
-                                      AmountModel model =
-                                          AmountModel(amount: amountInt);
-                                      amountProvider.addAmountProvider(model);
-                                    } else {
-                                      amountInt++;
-                                      AmountModel model =
-                                          AmountModel(amount: amountInt);
-                                      amountProvider.addAmountProvider(model);
-                                    }
-                                  } else {
-                                    normalDialog(context, 'คุณเลือกครบแล้ว !!!',
-                                        'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
-                                  }
-                                }
-                              }, // End onTAP
-                              child: Card(
-                                color: chooses[index]
-                                    ? MyConstant.redLight
-                                    : MyConstant.redDark,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: ShowTitle(
-                                      title: '${index + 1}',
-                                      textStyle: MyConstant().h0Style()),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+  Expanded buildRightContent() {
+    return Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: MyConstant.greenDark,
               ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: MyConstant.greenDark,
-                ),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        buildLogo(),
-                        buildMidButton(),
-                        buildSave(),
-                      ],
-                    ),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      buildLogo(),
+                      buildMidButton(),
+                      buildSave(),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        );
+  }
+
+  Expanded buildLeftContent() {
+    return Expanded(
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: MyConstant.greenBody,
+              ),
+              child: load
+                  ? ShowProgress()
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 250, childAspectRatio: 3),
+                      itemCount: electionModels.length,
+                      itemBuilder: (context, index) => Row(
+                        children: [
+                          Card(
+                            child: Container(
+                              width: 150,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.network(
+                                      '${MyConstant.domain}/election/${electionModels[index].image}',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 60,
+                                    child: ShowTitle(
+                                        title: electionModels[index].name,
+                                        textStyle: MyConstant().h1Style()),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
+                            onTap: () {
+                              if (!nonChooseBool) {
+                                normalDialog(context, MyConstant.nonChoose,
+                                    'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
+                              } else {
+                                if (amountInt != 0) {
+                                  setState(() {
+                                    chooses[index] = !chooses[index];
+                                  });
+
+                                  if (chooses[index]) {
+                                    amountInt--;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+
+                                    choiceChoosesIds
+                                        .add(electionModels[index].id);
+                                    // print(
+                                    //     '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
+                                  } else {
+                                    amountInt++;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+
+                                    // print(
+                                    //     '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
+                                    choiceChoosesIds
+                                        .remove(electionModels[index].id);
+                                    // print(
+                                    //     '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
+                                  }
+                                } else if (chooses[index]) {
+                                  setState(() {
+                                    chooses[index] = !chooses[index];
+                                  });
+
+                                  if (chooses[index]) {
+                                    amountInt--;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  } else {
+                                    amountInt++;
+                                    AmountModel model =
+                                        AmountModel(amount: amountInt);
+                                    amountProvider.addAmountProvider(model);
+                                  }
+                                } else {
+                                  normalDialog(context, 'คุณเลือกครบแล้ว !!!',
+                                      'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
+                                }
+                              }
+                            }, // End onTAP
+                            child: Card(
+                              color: chooses[index]
+                                  ? MyConstant.redLight
+                                  : MyConstant.redDark,
+                              child: Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: ShowTitle(
+                                    title: '${index + 1}',
+                                    textStyle: MyConstant().h0Style()),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+        );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text(MyConstant.election),
+      actions: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MyConstant().showTitle(
+              otpModel.name,
+              MyConstant().h1whiteStyle(),
+            ),
+            buildAmount(),
+          ],
+        ),
+        SizedBox(
+          width: 30,
+        ),
+      ],
     );
   }
 
@@ -597,7 +609,6 @@ class _ElectionState extends State<Election> {
           chooses.add(false);
         });
       }
-
       choiceChoosesIds.clear();
 
       setState(() {
