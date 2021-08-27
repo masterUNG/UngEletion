@@ -10,9 +10,17 @@ class AmountProvider with ChangeNotifier {
     return amountModels;
   }
 
+  // Clear Provider
+  void clearAmountProvider() {
+    amountModels.clear();
+    notifyListeners();
+  }
+
   // Add Data
   void addAmountProvider(AmountModel amountModel) {
-    amountModels.clear();
+    if (amountModels.length != 0) {
+  amountModels.clear();
+}
     amountModels.add(amountModel);
     notifyListeners();
   }

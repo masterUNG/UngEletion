@@ -81,7 +81,7 @@ class _ElectionState extends State<Election> {
       widgets.clear();
     }
 
-    String api = '${MyConstant.domain}/election/getAllSchool.php';
+    String api = '${MyConstant.domain}/election/getAllcity.php';
 
     await Dio().get(api).then(
       (value) {
@@ -199,146 +199,147 @@ class _ElectionState extends State<Election> {
 
   Expanded buildRightContent() {
     return Expanded(
-          flex: 1,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: MyConstant.greenDark,
-              ),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      buildLogo(),
-                      buildMidButton(),
-                      buildSave(),
-                    ],
-                  ),
-                ),
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: MyConstant.greenDark,
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  buildLogo(),
+                  buildMidButton(),
+                  buildSave(),
+                ],
               ),
             ),
           ),
-        );
+        ),
+      ),
+    );
   }
 
   Expanded buildLeftContent() {
     return Expanded(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: MyConstant.greenBody,
-              ),
-              child: load
-                  ? ShowProgress()
-                  : GridView.builder(
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 250, childAspectRatio: 3),
-                      itemCount: electionModels.length,
-                      itemBuilder: (context, index) => Row(
-                        children: [
-                          Card(
-                            child: Container(
-                              width: 150,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image.network(
-                                      '${MyConstant.domain}/election/${electionModels[index].image}',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 60,
-                                    child: ShowTitle(
-                                        title: electionModels[index].name,
-                                        textStyle: MyConstant().h1Style()),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
-                            onTap: () {
-                              if (!nonChooseBool) {
-                                normalDialog(context, MyConstant.nonChoose,
-                                    'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
-                              } else {
-                                if (amountInt != 0) {
-                                  setState(() {
-                                    chooses[index] = !chooses[index];
-                                  });
-
-                                  if (chooses[index]) {
-                                    amountInt--;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-
-                                    choiceChoosesIds
-                                        .add(electionModels[index].id);
-                                    // print(
-                                    //     '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
-                                  } else {
-                                    amountInt++;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-
-                                    // print(
-                                    //     '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
-                                    choiceChoosesIds
-                                        .remove(electionModels[index].id);
-                                    // print(
-                                    //     '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
-                                  }
-                                } else if (chooses[index]) {
-                                  setState(() {
-                                    chooses[index] = !chooses[index];
-                                  });
-
-                                  if (chooses[index]) {
-                                    amountInt--;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-                                  } else {
-                                    amountInt++;
-                                    AmountModel model =
-                                        AmountModel(amount: amountInt);
-                                    amountProvider.addAmountProvider(model);
-                                  }
-                                } else {
-                                  normalDialog(context, 'คุณเลือกครบแล้ว !!!',
-                                      'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
-                                }
-                              }
-                            }, // End onTAP
-                            child: Card(
-                              color: chooses[index]
-                                  ? MyConstant.redLight
-                                  : MyConstant.redDark,
-                              child: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: ShowTitle(
-                                    title: '${index + 1}',
-                                    textStyle: MyConstant().h0Style()),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-            ),
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: MyConstant.greenBody,
           ),
-        );
+          child: load
+              ? ShowProgress()
+              : GridView.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 250, childAspectRatio: 3),
+                  itemCount: electionModels.length,
+                  itemBuilder: (context, index) => Row(
+                    children: [
+                      Card(
+                        child: Container(
+                          width: 150,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                child: Image.network(
+                                  '${MyConstant.domain}/election/${electionModels[index].image}',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Container(
+                                width: 60,
+                                child: ShowTitle(
+                                    title: electionModels[index].name,
+                                    textStyle: MyConstant().h1Style()),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
+                        onTap: () {
+                          if (!nonChooseBool) {
+                            normalDialog(context, MyConstant.nonChoose,
+                                'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
+                          } else {
+                            if (amountInt != 0) {
+                              setState(() {
+                                chooses[index] = !chooses[index];
+                              });
+
+                              if (chooses[index]) {
+                                amountInt--;
+                                AmountModel model =
+                                    AmountModel(amount: amountInt);
+                                // amountProvider.clearAmountProvider();
+                                amountProvider.addAmountProvider(model);
+
+                                choiceChoosesIds.add(electionModels[index].id);
+                                // print(
+                                //     '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
+                              } else {
+                                amountInt++;
+                                AmountModel model =
+                                    AmountModel(amount: amountInt);
+                                    // amountProvider.clearAmountProvider();
+                                amountProvider.addAmountProvider(model);
+
+                                // print(
+                                //     '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
+                                choiceChoosesIds
+                                    .remove(electionModels[index].id);
+                                // print(
+                                //     '## choiceChooseIds ใหม่ ==>> $choiceChoosesIds');
+                              }
+                            } else if (chooses[index]) {
+                              setState(() {
+                                chooses[index] = !chooses[index];
+                              });
+
+                              if (chooses[index]) {
+                                amountInt--;
+                                AmountModel model =
+                                    AmountModel(amount: amountInt);
+                                amountProvider.addAmountProvider(model);
+                              } else {
+                                amountInt++;
+                                AmountModel model =
+                                    AmountModel(amount: amountInt);
+                                amountProvider.addAmountProvider(model);
+                              }
+                            } else {
+                              normalDialog(context, 'คุณเลือกครบแล้ว !!!',
+                                  'ไม่สามารถเลือกได้คะ คุณเลือกครบแล้ว');
+                            }
+                          }
+                        }, // End onTAP
+                        child: Card(
+                          color: chooses[index]
+                              ? MyConstant.redLight
+                              : MyConstant.redDark,
+                          child: Padding(
+                            padding: const EdgeInsets.all(14.0),
+                            child: ShowTitle(
+                                title: '${index + 1}',
+                                textStyle: MyConstant().h0Style()),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+        ),
+      ),
+    );
   }
 
   AppBar buildAppBar() {
@@ -393,7 +394,7 @@ class _ElectionState extends State<Election> {
         child: InkWell(
           child: Image.asset(MyConstant.cancelImage),
           onTap: () {
-            // bool nonChooseBool = true; // false => Yollow Light<ไม่ประสง์ออกคะแนน>, true => Yellow Dark
+            // bool nonChooseBool = true; // false => Yollow Light<ไม่ประสง์ออกคะแนน>, true => Yellow Dark <ลงคะแนน>
             if ((choiceChoosesIds.length == 0) && nonChooseBool) {
               normalDialog(context, 'ยังไม่ได้เลือกใครเลย ?',
                   'โปรดเลือก หรือ ไม่ประสงค์ลงคะแนน');
@@ -595,8 +596,17 @@ class _ElectionState extends State<Election> {
   }
 
   Future<Null> delayTime() async {
-    Duration duration = Duration(seconds: 1);
+    Duration duration = Duration(milliseconds: 500);
     await Timer(duration, () {
+      print('#### ค่าที่ได้จากการเลือก choiceChooseIds ==>> $choiceChoosesIds');
+
+      print(
+          '### ค่าของ Provider ==>>  ${amountProvider.getAmountProvider()[0].toMap()}');
+
+      // if (amountProvider.amountModels.length != 0) {
+      //   amountProvider.clearAmountProvider();
+      // }
+
       for (var item in choiceChoosesIds) {
         amountInt++;
         AmountModel model = AmountModel(amount: amountInt);
