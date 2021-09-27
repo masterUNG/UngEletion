@@ -9,6 +9,7 @@ import 'package:ungelection/model/show_result_model.dart';
 import 'package:ungelection/provider/amount2_provider.dart';
 import 'package:ungelection/provider/amount_provider.dart';
 import 'package:ungelection/states/after_election.dart';
+import 'package:ungelection/states/authen_admin.dart';
 import 'package:ungelection/states/authen_landscape.dart';
 import 'package:ungelection/states/before_election.dart';
 import 'package:ungelection/states/show_check.dart';
@@ -21,6 +22,7 @@ final Map<String, WidgetBuilder> map = {
   '/beforeElection': (BuildContext context) => BeforeElection(),
   '/afterElection': (BuildContext context) => AfterElection(),
   '/showCheck': (BuildContext context) => ShowCheck(),
+  '/authenAdmin': (BuildContext context) => AuthenAdmin(),
 };
 
 String initialRoute;

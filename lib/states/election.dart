@@ -59,6 +59,8 @@ class _ElectionState extends State<Election> {
 
     readData();
     readEletionDate();
+
+    readSQLite();
   }
 
   Future<Null> readEletionDate() async {
@@ -267,10 +269,12 @@ class _ElectionState extends State<Election> {
                       GestureDetector(
                         //ที่คลิกเลือกตั้ง choose=> true เลืิิอก, false ไม่เลือก
                         onTap: () {
+                          // print('#### Clickๆๆๆๆๆ');
                           if (!nonChooseBool) {
                             normalDialog(context, MyConstant.nonChoose,
                                 'ถ้าประสงค์ ลงคะแนน ต้องไปปลดออกก่อน');
                           } else {
+                            // print('### การกระทำใดๆ amountInt ==> $amountInt');
                             if (amountInt != 0) {
                               setState(() {
                                 chooses[index] = !chooses[index];
@@ -283,6 +287,9 @@ class _ElectionState extends State<Election> {
                                 // amountProvider.clearAmountProvider();
                                 amountProvider.addAmountProvider(model);
 
+                                // print(
+                                //     '#### ค่าของ ตอนลบ amountProvicer[0] ==>>> ${amountProvider.getAmountProvider()[0].amount}');
+
                                 choiceChoosesIds.add(electionModels[index].id);
                                 // print(
                                 //     '##@@@@@ choiceChooseIds ==>> $choiceChoosesIds');
@@ -290,8 +297,11 @@ class _ElectionState extends State<Election> {
                                 amountInt++;
                                 AmountModel model =
                                     AmountModel(amount: amountInt);
-                                    // amountProvider.clearAmountProvider();
+                                // amountProvider.clearAmountProvider();
                                 amountProvider.addAmountProvider(model);
+
+                                // print(
+                                //     '#### ค่าของ ตอนลบ amountProvicer[0] ==>>> ${amountProvider.getAmountProvider()[0].amount}');
 
                                 // print(
                                 //     '###**** index ที่ไม่เลือก ==>> ${electionModels[index].id}');
@@ -309,11 +319,15 @@ class _ElectionState extends State<Election> {
                                 amountInt--;
                                 AmountModel model =
                                     AmountModel(amount: amountInt);
+                                // print(
+                                //     '### model ที่ใส่ถ้าเลือกผู้แทน ==>> ${model.amount}');
                                 amountProvider.addAmountProvider(model);
                               } else {
                                 amountInt++;
                                 AmountModel model =
                                     AmountModel(amount: amountInt);
+                                // print(
+                                //     '### model ที่ใส่ถ้าไม่เลือกเลือกผู้แทน ==>> ${model.amount}');
                                 amountProvider.addAmountProvider(model);
                               }
                             } else {
@@ -413,10 +427,9 @@ class _ElectionState extends State<Election> {
 
     await SQLiteHelper().readAllData().then((value) async {
       sqliteModels = value;
-      // print('จำนวนขนาดของ SQL ==>> ${sqliteModels.length}');
+      print('################################# จำนวนขนาดของ SQL ==>> ${sqliteModels.length}');
       for (var item in sqliteModels) {
-        // print('### id = ${item.id} | ${item.idOtp} | ${item.choiceChooseId}');
-
+        print('### id = ${item.id} | ${item.idOtp} | ${item.choiceChooseId}');
         print('###### choiceChooseId ==>> ${item.choiceChooseId}');
         // ###### choiceChooseId ==>> [4, 5, 6]
 
@@ -431,13 +444,13 @@ class _ElectionState extends State<Election> {
             for (var item in json.decode(value.data)) {
               ElectionModel electionModel = ElectionModel.fromMap(item);
               String scoreStr = electionModel.score;
-              print('#### scoreStr ==> $scoreStr');
+              // print('#### scoreStr ==> $scoreStr');
               int score = int.parse(scoreStr) + 1;
 
               String apiEditScoreWhereId =
                   'https://www.androidthai.in.th/election/editScoreWhereId.php?isAdd=true&id=$id&score=$score';
               await Dio().get(apiEditScoreWhereId).then((value) {
-                print('### Edit id ผู้สมัครที่ $id มีค่า Score ==>> $score');
+                // print('### Edit id ผู้สมัครที่ $id มีค่า Score ==>> $score');
               });
             }
           });
@@ -492,7 +505,7 @@ class _ElectionState extends State<Election> {
     // 1. Edit Status to false
     String path =
         '${MyConstant.domain}/election/editStatusWhereId.php?isAdd=true&id=${otpModel.id}';
-    // print('### path = $path');
+    // print('######################### path = $path');
     await Dio().get(path).then((value) async {
       if (value.toString() == 'true') {
         // 2. Save choiceChoosesIds -> Sharepreferance
@@ -598,20 +611,24 @@ class _ElectionState extends State<Election> {
   Future<Null> delayTime() async {
     Duration duration = Duration(milliseconds: 500);
     await Timer(duration, () {
-      print('#### ค่าที่ได้จากการเลือก choiceChooseIds ==>> $choiceChoosesIds');
+      // print('#### ค่าที่ได้จากการเลือก choiceChooseIds ==>> $choiceChoosesIds');
 
-      print(
-          '### ค่าของ Provider ==>>  ${amountProvider.getAmountProvider()[0].toMap()}');
+      // print(
+      //     '### ค่าของ Provider ==>>  ${amountProvider.getAmountProvider()[0].toMap()}');
 
       // if (amountProvider.amountModels.length != 0) {
       //   amountProvider.clearAmountProvider();
       // }
 
-      for (var item in choiceChoosesIds) {
-        amountInt++;
-        AmountModel model = AmountModel(amount: amountInt);
-        amountProvider.addAmountProvider(model);
-      }
+      // for (var item in choiceChoosesIds) {
+      //   amountInt++;
+      //   AmountModel model = AmountModel(amount: amountInt);
+      //   amountProvider.addAmountProvider(model);
+      // }
+
+      amountInt = int.parse(otpModel.amount);
+      AmountModel model = AmountModel(amount: amountInt);
+      amountProvider.addAmountProvider(model);
 
       chooses.clear();
       for (var item in electionModels) {

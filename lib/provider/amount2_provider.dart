@@ -12,6 +12,7 @@ class Amount2Provider with ChangeNotifier {
 
   // set data
   void setAmountProvider(AmountModel amountModel) {
+    print('#### ค่า serAmountProvider ที่ได้รับมา ==>> ${amountModel.amount}');
     amount = amountModel.amount;
     notifyListeners();
   }
