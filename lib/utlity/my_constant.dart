@@ -17,6 +17,7 @@ class MyConstant {
   static final String routeAferElection = '/afterElection';
   static final String routeShowCheck = '/showCheck';
   static final String routeAuthenAdmin = '/authenAdmin';
+  static final String routeAdmonController = '/adminController';
 
   static final String election = 'ตู้เลือกตั้ง';
   static final String nonChoose = 'ไม่ประสงค์ลงคะแนน';
