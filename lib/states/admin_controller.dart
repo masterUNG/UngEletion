@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:ungelection/model/listpeople_model.dart';
 import 'package:ungelection/model/otp_model.dart';
 import 'package:ungelection/utlity/dialog.dart';
 import 'package:ungelection/utlity/my_constant.dart';
@@ -24,11 +28,50 @@ class _AdminControllerState extends State<AdminController> {
   List<OtpModel> otpModels = [];
   bool load = true;
   bool haveData; // true ==> Have Data
+  List<ListPeopleModel> listPeoPleModels = [];
+  List<Widget> widgets = [];
 
   @override
   void initState() {
     super.initState();
     readDataOtp();
+    readListPeople();
+  }
+
+  Future<Null> readListPeople() async {
+    String urlApi =
+        'https://www.androidthai.in.th/election/getAllListPeopleUng.php';
+    int i = 0;
+    await Dio().get(urlApi).then((value) {
+      for (var item in json.decode(value.data)) {
+        ListPeopleModel model = ListPeopleModel.fromMap(item);
+        listPeoPleModels.add(model);
+        print('### name ==>> ${model.name}');
+        widgets.add(createWidget(model, i));
+        i++;
+      }
+    });
+  }
+
+  Widget createWidget(ListPeopleModel model, int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ShowTitle(title: model.name, textStyle: MyConstant().h2Style()),
+        IconButton(
+            icon: Icon(
+              Icons.cloud_download_outlined,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              String urlAPI =
+                  'https://www.androidthai.in.th/election/data${listPeoPleModels[index].nameFile}';
+              print('### urlAPI ==>> $urlAPI');
+              processDownload(urlAPI);
+              Navigator.pop(context);
+            }),
+      ],
+    );
   }
 
   Future<Null> readDataOtp() async {
@@ -75,7 +118,14 @@ class _AdminControllerState extends State<AdminController> {
               Container(
                 height: 30,
                 child: ElevatedButton(
-                  onPressed: () => processInsert(),
+                  onPressed: () {
+                    if (otpModels.length != 0) {
+                      normalDialog(context, 'Have Data',
+                          'Please Clear Data Before Insert New Data');
+                    } else {
+                      showListPeople();
+                    } // end if
+                  },
                   child: Text('Insert'),
                 ),
               ),
@@ -165,54 +215,92 @@ class _AdminControllerState extends State<AdminController> {
     );
   }
 
-  Future<Null> processInsert() async {
-    if (otpModels.length != 0) {
-      normalDialog(
-          context, 'Have Data', 'Please Clear Data Before Insert New Data');
-    } else {
-      progressDialog(context);
+  Future<Null> processInsert(File file) async {
+    progressDialog(context);
 
-      String xlsxAssets = 'assets/test55.xlsx';
+    var bytes = await file.readAsBytesSync();
 
-      ByteData byteData = await rootBundle.load(xlsxAssets);
+    var excel = Excel.decodeBytes(bytes);
 
-      var bytes = byteData.buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-
-      var excel = Excel.decodeBytes(bytes);
-
-      List<String> nameSheets = [];
-      for (var item in excel.tables.keys) {
-        nameSheets.add(item);
-      }
-
-      var maxCol = excel.tables[nameSheets[0]].maxCols;
-      var maxRow = excel.tables[nameSheets[0]].maxRows;
-
-      print('### nameSheets ==>> $nameSheets');
-      print('### maxCol ==>> $maxCol, maxRow ==>> $maxRow');
-
-      int amountRecord = 0;
-
-      for (var item in excel.tables[nameSheets[0]].rows) {
-        amountRecord++;
-        print('### item = $item');
-        List<dynamic> datas = item;
-
-        String name = '${datas[0]} ${datas[1]} ${datas[2]}';
-        String otp = Random().nextInt(1000000).toString();
-        String amount = '6';
-
-        String urlAPI =
-            'https://www.androidthai.in.th/election/insertOtpUng.php?isAdd=true&name=$name&otp=$otp&amount=$amount';
-        await Dio().get(urlAPI).then((value) {
-          if (amountRecord >= maxRow) {
-            print('### end of Data #####');
-            Navigator.pop(context);
-            readDataOtp();
-          }
-        });
-      }
+    List<String> nameSheets = [];
+    for (var item in excel.tables.keys) {
+      nameSheets.add(item);
     }
+
+    var maxCol = excel.tables[nameSheets[0]].maxCols;
+    var maxRow = excel.tables[nameSheets[0]].maxRows;
+
+    print('### nameSheets ==>> $nameSheets');
+    print('### maxCol ==>> $maxCol, maxRow ==>> $maxRow');
+
+    int amountRecord = 0;
+
+    for (var item in excel.tables[nameSheets[0]].rows) {
+      amountRecord++;
+      print('### item = $item');
+      List<dynamic> datas = item;
+
+      String name = '${datas[0]} ${datas[1]} ${datas[2]}';
+      String otp = Random().nextInt(1000000).toString();
+      String amount = '6';
+
+      String urlAPI =
+          'https://www.androidthai.in.th/election/insertOtpUng.php?isAdd=true&name=$name&otp=$otp&amount=$amount';
+      await Dio().get(urlAPI).then((value) {
+        if (amountRecord >= maxRow) {
+          print('### end of Data #####');
+          Navigator.pop(context);
+          readDataOtp();
+        }
+      });
+    }
+  }
+
+  Future<Null> processDownload(String urlAPI) async {
+    /* String urlDownload =
+        'https://www.androidthai.in.th/election/data/master55.xlsx';
+    print('urlDownload ==> $urlDownload'); */
+
+    try {
+      var tempDir = await getTemporaryDirectory();
+      String savePath = tempDir.path + '/data.xlsx';
+      print('### savePath ==> $savePath');
+
+      await Dio().download(urlAPI, savePath).then((value) {
+        print('Success Download');
+        File file = File(savePath);
+        processInsert(file);
+      });
+    } catch (e) {
+      print('error Donwload ==> ${e.toString()}');
+    }
+  }
+
+  Future<Null> showListPeople() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MyConstant.greenDark,
+        title: ShowTitle(
+            title: 'Please Choose Name',
+            textStyle: MyConstant().h1whiteStyle()),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: ShowTitle(
+              title: 'Cancel',
+              textStyle: MyConstant().h2YellowStyle(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
