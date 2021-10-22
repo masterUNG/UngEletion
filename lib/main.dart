@@ -28,6 +28,7 @@ final Map<String, WidgetBuilder> map = {
 };
 
 String initialRoute;
+// ทดสอบ นะจ้ะ
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
