@@ -27,13 +27,13 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.3
+  cupertino_icons: ^1.0.2
   dio: ^4.0.0
   otp_text_field: ^1.1.1
   provider: ^6.0.1
   shared_preferences: ^2.0.8
   sqflite: ^2.0.0+4
-  charts_flutter: ^0.11.0
+  # charts_flutter: ^0.11.0
   excel: ^2.0.0-null-safety-3
   path_provider: ^2.0.5
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:charts_flutter/flutter.dart';
+// import 'package:charts_flutter/flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ungelection/model/election_model.dart';
@@ -8,6 +8,7 @@ import 'package:ungelection/model/otp_model.dart';
 import 'package:ungelection/model/result_model.dart';
 import 'package:ungelection/utlity/my_constant.dart';
 import 'package:ungelection/widget/show_progress.dart';
+import 'package:ungelection/widget/show_title.dart';
 
 class ShowReslut extends StatefulWidget {
   const ShowReslut({Key key}) : super(key: key);
@@ -127,17 +128,18 @@ class _ShowReslutState extends State<ShowReslut> {
   ];
 
   Widget buildChart() {
-    var seriesList = [
-      Series(
-        id: 'id',
-        data: data,
-        domainFn: (ResultModel model, index) => model.xValue,
-        measureFn: (ResultModel model, index) => model.yValue,
-      )
-    ];
-    return BarChart(
-      seriesList,
-      animate: true,
-    );
+    // var seriesList = [
+    //   Series(
+    //     id: 'id',
+    //     data: data,
+    //     domainFn: (ResultModel model, index) => model.xValue,
+    //     measureFn: (ResultModel model, index) => model.yValue,
+    //   )
+    // ];
+    // return BarChart(
+    //   seriesList,
+    //   animate: true,
+    // );
+    ShowTitle(title: 'Cannot Use Chart', textStyle: MyConstant().h1Style());
   }
 }
