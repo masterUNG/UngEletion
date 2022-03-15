@@ -16,13 +16,17 @@ class AuthenLandScape extends StatefulWidget {
 }
 
 class _AuthenLandScapeState extends State<AuthenLandScape> {
+  OtpFieldController controller = OtpFieldController();
+
   Future<Null> checkOTP(String otp) async {
     String api =
         '${MyConstant.domain}/election/getOtpWherePin.php?isAdd=true&otp=$otp';
+    print('api ===>> $api');
     await Dio().get(api).then((value) {
       print('##### value = $value ###');
       if (value.toString() == 'null') {
         normalDialog(context, 'OTP false !!!', 'Please Try Again ?');
+        controller.clear();
       } else {
         for (var item in json.decode(value.data)) {
           OtpModel model = OtpModel.fromMap(item);
@@ -70,6 +74,7 @@ class _AuthenLandScapeState extends State<AuthenLandScape> {
 
   OTPTextField buildOtpTextField() {
     return OTPTextField(
+      controller: controller,
       length: 6,
       width: 250,
       style: TextStyle(

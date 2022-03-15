@@ -91,8 +91,8 @@ class _ElectionState extends State<Election> {
         if (value.toString() != 'null') {
           for (var item in json.decode(value.data)) {
             ElectionModel model = ElectionModel.fromMap(item);
-            // print(
-            //     '#### urlimage ===>>> ${MyConstant.domain}/election/${model.image}');
+            print(
+                '#### urlimage ===>>> ${MyConstant.domain}/election/${model.image}');
             if (click) {
               chooses.add(false);
             }
